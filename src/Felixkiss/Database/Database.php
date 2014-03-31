@@ -45,7 +45,6 @@ class Database
         $statement = $this->pdo->prepare($query);
 
         $this->bindParameters($statement, $parameters);
-
         $statement->execute();
 
         return $statement;
@@ -60,11 +59,11 @@ class Database
     public function insert($table, $values = [])
     {
         $sql = $this->buildInsertQuery($table, $values);
-
         $statement = $this->pdo->prepare($sql);
-        $this->bindParameters($statement, $values);
 
+        $this->bindParameters($statement, $values);
         $statement->execute();
+
         $statement->closeCursor();
     }
 
