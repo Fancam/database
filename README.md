@@ -55,6 +55,24 @@ $users = $db->select(
 ]);
 ```
 
+### Get An Array Of One Column
+
+```php
+$users = $db->lists('SELECT username FROM users');
+```
+
+This will return a flattened array like:
+
+```
+['felixkiss', 'foobar', ...]
+```
+
+### Get A Single Value
+
+```php
+$count = $db->pluck('SELECT COUNT(*) FROM users');
+```
+
 ## Inserting Records
 
 ```php
