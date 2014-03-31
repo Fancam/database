@@ -109,6 +109,18 @@ class DatabaseSpec extends ObjectBehavior
              ->shouldReturn(['felixkiss']);
     }
 
+    function its_pluck_should_give_a_single_value($pdo)
+    {
+        $statement = $this->mockStatementFor($pdo, 'SELECT COUNT(*) FROM users');
+
+        $statement->fetchColumn(0)
+                  ->willReturn(2)
+                  ->shouldBeCalled();
+        // when
+        $this->pluck('SELECT COUNT(*) FROM users')
+             ->shouldReturn(2);
+    }
+
     function it_should_insert_records_using_prepared_statements($pdo)
     {
         $statement = $this->mockStatementFor($pdo, 'INSERT INTO users (username, city) VALUES (:username, :city)');

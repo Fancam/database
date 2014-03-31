@@ -67,6 +67,22 @@ class Database
     }
 
     /**
+     * Get a single value from the database.
+     *
+     * @param  string $query
+     * @param  array  $parameters
+     * @return mixed
+     */
+    public function pluck($query, $parameters = [])
+    {
+        $statement = $this->select($query, $parameters);
+        $result = $statement->fetchColumn(0);
+
+        $statement->closeCursor();
+        return $result;
+    }
+
+    /**
      * Inserts a record into the given table.
      *
      * @param string $table
