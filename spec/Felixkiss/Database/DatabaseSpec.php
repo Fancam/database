@@ -1,6 +1,7 @@
 <?php namespace spec\Felixkiss\Database;
 
 use PhpSpec\ObjectBehavior;
+use Prophecy\Argument;
 use PDO;
 use PDOStatement;
 
@@ -96,6 +97,24 @@ class DatabaseSpec extends ObjectBehavior
             true,
             null,
             'baz'
+        ]);
+    }
+
+    function it_should_insert_records_using_prepared_statements($pdo, PDOStatement $statement)
+    {
+        $pdo->prepare('INSERT INTO users (username, city) VALUES (:username, :city)')
+            ->shouldBeCalled()
+            ->willReturn($statement);
+        $statement->bindValue(Argument::cetera())
+                  ->shouldBeCalled();
+        $statement->execute()
+                  ->shouldBeCalled();
+        $statement->closeCursor()
+                  ->shouldBeCalled();
+
+        $this->insert('users', [
+            'username' => 'felixkiss',
+            'city' => 'Vienna, Austria',
         ]);
     }
 }

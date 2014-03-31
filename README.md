@@ -55,6 +55,15 @@ $users = $db->select(
 ]);
 ```
 
+## Inserting Records
+
+```php
+$db->insert('users', [
+    'username' => 'felixkiss',
+    'location' => 'Vienna, Austria',
+]);
+```
+
 # License
 
 MIT, see LICENSE.md

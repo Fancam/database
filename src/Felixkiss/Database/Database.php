@@ -1,6 +1,7 @@
 <?php namespace Felixkiss\Database;
 
 use PDO;
+use PDOStatement;
 
 class Database
 {
@@ -43,21 +44,28 @@ class Database
     {
         $statement = $this->pdo->prepare($query);
 
-        foreach ($parameters as $key => $value)
-        {
-            if (is_numeric($key))
-            {
-                $key += 1;
-            }
-
-            $type = $this->getDataType($value);
-
-            $statement->bindValue($key, $value, $type);
-        }
+        $this->bindParameters($statement, $parameters);
 
         $statement->execute();
 
         return $statement;
+    }
+
+    /**
+     * Inserts a record into the given table.
+     *
+     * @param string $table
+     * @param array  $values
+     */
+    public function insert($table, $values = [])
+    {
+        $sql = $this->buildInsertQuery($table, $values);
+
+        $statement = $this->pdo->prepare($sql);
+        $this->bindParameters($statement, $values);
+
+        $statement->execute();
+        $statement->closeCursor();
     }
 
     /**
@@ -82,5 +90,50 @@ class Database
             return PDO::PARAM_INT;
         }
         return PDO::PARAM_STR;
+    }
+
+    /**
+     * Binds the given parameters to the PDOStatement.
+     *
+     * @param PDOStatement $statement
+     * @param array        $parameters
+     */
+    protected function bindParameters(PDOStatement $statement, array $parameters)
+    {
+        foreach ($parameters as $key => $value)
+        {
+            // PDO uses 1-indexed numbered parameters
+            if (is_numeric($key))
+            {
+                $key += 1;
+            }
+
+            // Find the correct data type for the current value.
+            // Without this, you can't use parameters in clauses beside WHERE
+            // (e.g. LIMIT)
+            $type = $this->getDataType($value);
+
+            $statement->bindValue($key, $value, $type);
+        }
+    }
+
+    /**
+     * Create INSERT INTO query.
+     *
+     * @param  string $table
+     * @param  array  $values
+     * @return string
+     */
+    protected function buildInsertQuery($table, $values)
+    {
+        $fields = array_keys($values);
+        $parameters = array_map(function($name)
+        {
+            return ':' . $name;
+        }, $fields);
+
+        return 'INSERT INTO ' . $table . ' (' .
+               implode(', ', $fields) . ') VALUES (' .
+               implode(', ', $parameters) . ')';
     }
 }
