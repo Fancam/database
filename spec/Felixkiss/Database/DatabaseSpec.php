@@ -96,6 +96,19 @@ class DatabaseSpec extends ObjectBehavior
         ]);
     }
 
+    function its_lists_should_provide_a_list_of_a_given_column($pdo)
+    {
+        $statement = $this->mockStatementFor($pdo, 'SELECT username FROM users');
+
+        $statement->fetchAll(PDO::FETCH_COLUMN, 0)
+                  ->willReturn(['felixkiss'])
+                  ->shouldBeCalled();
+
+        // when
+        $this->lists('SELECT username FROM users')
+             ->shouldReturn(['felixkiss']);
+    }
+
     function it_should_insert_records_using_prepared_statements($pdo)
     {
         $statement = $this->mockStatementFor($pdo, 'INSERT INTO users (username, city) VALUES (:username, :city)');

@@ -51,6 +51,22 @@ class Database
     }
 
     /**
+     * Get an array of values from a single database column.
+     *
+     * @param  string $query
+     * @param  array  $parameters
+     * @return array
+     */
+    public function lists($query, $parameters = [])
+    {
+        $statement = $this->select($query, $parameters);
+        $list = $statement->fetchAll(PDO::FETCH_COLUMN, 0);
+
+        $statement->closeCursor();
+        return $list;
+    }
+
+    /**
      * Inserts a record into the given table.
      *
      * @param string $table
