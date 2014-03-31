@@ -13,7 +13,7 @@ To instantiate a `Database` instance:
 ```php
 require 'vendor/autoload.php';
 
-use Felixkiss\Database;
+use Felixkiss\Database\Database;
 
 $pdo = new PDO('mysql:dbname=foo;host=127.0.0.1', 'foo', 'bar');
 $db = new Database($pdo);
