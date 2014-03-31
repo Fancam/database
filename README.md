@@ -28,6 +28,33 @@ $db->execute('TRUNCATE some_table');
 The `execute` method will return the number of affected rows. See
 [PDO#exec](http://www.php.net/manual/en/pdo.exec.php) for more information.
 
+## SELECT
+
+```php
+$user = $db->select('SELECT * FROM user');
+foreach ($users as $user)
+{
+    // Do something ...
+}
+```
+
+### With Numbered Parameters
+
+```php
+$users = $db->select('SELECT * FROM user WHERE age BETWEEN ? AND ?', [20, 40]);
+```
+
+### With Named Parameters
+
+```php
+$users = $db->select(
+  'SELECT * FROM user WHERE age BETWEEN :young AND :old LIMIT 0, :limit', [
+  ':young' => 20,
+  ':old'   => 40,
+  ':limit' => 10,
+]);
+```
+
 # License
 
 MIT, see LICENSE.md
