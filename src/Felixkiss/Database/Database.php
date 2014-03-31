@@ -61,7 +61,13 @@ class Database
         $sql = $this->buildInsertQuery($table, $values);
         $statement = $this->pdo->prepare($sql);
 
-        $this->bindParameters($statement, $values);
+        $parameters = [];
+        foreach ($values as $key => $value)
+        {
+            $parameters[':' . $key] = $value;
+        }
+
+        $this->bindParameters($statement, $parameters);
         $statement->execute();
 
         $statement->closeCursor();
