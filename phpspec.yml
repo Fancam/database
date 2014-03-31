@@ -1,0 +1,6 @@
+suites:
+  database_suite:
+    namespace: Felixkiss\Database
+    src_path: src
+
+formatter.name: dot
