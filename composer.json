@@ -1,5 +1,5 @@
 {
-    "name": "felix/database",
+    "name": "felixkiss/database",
     "description": "A simple wrapper around PDO",
     "keywords": ["database", "pdo"],
     "license": "MIT",
