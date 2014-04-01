@@ -27,6 +27,30 @@ class DatabaseSpec extends ObjectBehavior
         $this->execute('SOME SQL foo');
     }
 
+    function its_execute_should_run_on_write_by_default(PDO $read, PDO $write)
+    {
+        $this->beConstructedWith($read, $write);
+
+        $read->exec(Argument::any())
+             ->shouldBeCalledTimes(0);
+        $write->exec(Argument::any())
+              ->shouldBeCalled();
+
+        $this->execute('SOME SQL foo');
+    }
+
+    function its_execute_should_run_on_read_if_specified(PDO $read, PDO $write)
+    {
+        $this->beConstructedWith($read, $write);
+
+        $read->exec(Argument::any())
+             ->shouldBeCalled();
+        $write->exec(Argument::any())
+              ->shouldBeCalledTimes(0);
+
+        $this->execute('SOME SQL foo', true);
+    }
+
     function its_execute_should_return_the_number_of_affected_rows($pdo)
     {
         $pdo->exec('SOME SQL foo')
@@ -134,6 +158,26 @@ class DatabaseSpec extends ObjectBehavior
         $this->insert('users', [
             'username' => 'felixkiss',
             'city' => 'Vienna, Austria',
+        ]);
+    }
+
+    function it_should_insert_records_on_the_write_connection(
+        PDO $read,
+        PDO $write,
+        PDOStatement $statement
+    )
+    {
+        $this->beConstructedWith($read, $write);
+        $write->prepare(Argument::cetera())
+              ->shouldBeCalled()
+              ->willReturn($statement);
+        $read->prepare(Argument::cetera())
+             ->shouldBeCalledTimes(0)
+             ->willReturn($statement);
+
+        // when
+        $this->insert('users', [
+            'username' => 'felixkiss',
         ]);
     }
 

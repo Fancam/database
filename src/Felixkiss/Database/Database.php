@@ -6,30 +6,53 @@ use PDOStatement;
 class Database
 {
     /**
-     * The PDO connection to run sql commands against.
+     * The PDO connection to run readonly commands against.
+     * (e.g. SELECT)
      *
      * @var PDO
      */
-    protected $pdo;
+    protected $read;
+
+    /**
+     * The PDO connection to run write commands against.
+     * (e.g. INSERT, UPDATE, DELETE)
+     *
+     * @var PDO
+     */
+    protected $write;
 
     /**
      * @param PDO $pdo
      */
-    public function __construct(PDO $pdo)
+    public function __construct(PDO $read, PDO $write = null)
     {
-        $this->pdo = $pdo;
+        $this->read = $read;
+
+        if (!is_null($write))
+        {
+            $this->write = $write;
+        }
+        else
+        {
+            $this->write = $read;
+        }
     }
 
     /**
      * Executes any SQL command (DROP, DELETE, TRUNCATE, etc.)
+     * Specify $readOnly = true, if it should be executed on the
+     * read connection.
+     *
      * Returns the number of affected rows by the command.
      *
-     * @param  string $sql
+     * @param  string  $sql
+     * @param  boolean $readOnly
      * @return integer
      */
-    public function execute($sql)
+    public function execute($sql, $readOnly = false)
     {
-        return $this->pdo->exec($sql);
+        $connection = $readOnly === true ? $this->read : $this->write;
+        return $connection->exec($sql);
     }
 
     /**
@@ -42,7 +65,7 @@ class Database
      */
     public function select($query, $parameters = [])
     {
-        $statement = $this->pdo->prepare($query);
+        $statement = $this->read->prepare($query);
 
         $this->bindParameters($statement, $parameters);
         $statement->execute();
@@ -91,7 +114,7 @@ class Database
     public function insert($table, $values = [])
     {
         $sql = $this->buildInsertQuery($table, $values);
-        $statement = $this->pdo->prepare($sql);
+        $statement = $this->write->prepare($sql);
 
         $parameters = [];
         foreach ($values as $key => $value)

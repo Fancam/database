@@ -82,6 +82,25 @@ $db->insert('users', [
 ]);
 ```
 
+## Different Connections For Read And Write Operations
+
+Sometimes it can be useful, to specify separate connections for reads (SELECT)
+and writes (INSERT, UPDATE, DELETE), e.g. in a replicated environment.
+
+```php
+$read = new PDO('mysql:dbname=foo;host=127.0.0.1', 'foo', 'bar');
+$write = new PDO('mysql:dbname=foo;host=mirror.example.com', 'foo', 'bar');
+$db = new Database($read, $write);
+```
+
+Other SQL statements (via `execute()`) will be called on the write connection by
+default, unless `$readOnly = true` is specified as the second parameter:
+
+```php
+$db->execute('TRUNCATE users'); // runs on write connection
+$db->execute('LOCK TABLE users WRITE', true); // runs on read connection
+```
+
 # License
 
 MIT, see LICENSE.md
