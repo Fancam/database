@@ -164,8 +164,7 @@ class DatabaseSpec extends ObjectBehavior
     function it_should_insert_records_on_the_write_connection(
         PDO $read,
         PDO $write,
-        PDOStatement $statement
-    )
+        PDOStatement $statement)
     {
         $this->beConstructedWith($read, $write);
         $write->prepare(Argument::cetera())
@@ -178,6 +177,44 @@ class DatabaseSpec extends ObjectBehavior
         // when
         $this->insert('users', [
             'username' => 'felixkiss',
+        ]);
+    }
+
+    function it_should_update_records_using_prepared_statements($pdo)
+    {
+        $statement = $this->mockStatementFor($pdo, 'UPDATE users SET city = :city WHERE username = :username');
+
+        $statement->bindValue(':username', Argument::cetera())
+                  ->shouldBeCalled();
+        $statement->bindValue(':city', Argument::cetera())
+                  ->shouldBeCalled();
+
+        // when
+        $this->update('users', [
+            'city' => 'Vienna, Austria',
+        ], 'WHERE username = :username', [
+            ':username' => 'felixkiss',
+        ]);
+    }
+
+    function it_should_update_records_on_the_write_connection(
+        PDO $read,
+        PDO $write,
+        PDOStatement $statement)
+    {
+        $this->beConstructedWith($read, $write);
+        $write->prepare(Argument::cetera())
+              ->shouldBeCalled()
+              ->willReturn($statement);
+        $read->prepare(Argument::cetera())
+             ->shouldBeCalledTimes(0)
+             ->willReturn($statement);
+
+        // when
+        $this->update('users', [
+            'city' => 'Vienna, Austria',
+        ], 'WHERE username = :username', [
+            ':username' => 'felixkiss',
         ]);
     }
 

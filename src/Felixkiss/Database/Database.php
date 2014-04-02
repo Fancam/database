@@ -129,6 +129,32 @@ class Database
     }
 
     /**
+     * Updates a record in the database
+     *
+     * @param string $table
+     * @param array  $values
+     * @param string $where
+     * @param array  $whereParameters
+     */
+    public function update($table, $values, $where, $whereParameters)
+    {
+        $sql = $this->buildUpdateQuery($table, $values) . ' ' . $where;
+        $statement = $this->write->prepare($sql);
+
+        $parameters = [];
+        foreach ($values as $key => $value)
+        {
+            $parameters[':' . $key] = $value;
+        }
+        $parameters = array_merge($parameters, $whereParameters);
+
+        $this->bindParameters($statement, $parameters);
+        $statement->execute();
+
+        $statement->closeCursor();
+    }
+
+    /**
      * Determine the correct PDO data type for a value.
      * PDO::PARAM_*
      *
@@ -195,5 +221,24 @@ class Database
         return 'INSERT INTO ' . $table . ' (' .
                implode(', ', $fields) . ') VALUES (' .
                implode(', ', $parameters) . ')';
+    }
+
+    /**
+     * Create UPDATE query.
+     *
+     * @param  string $table
+     * @param  array  $values
+     * @return string
+     */
+    protected function buildUpdateQuery($table, $values)
+    {
+        $fields = array_keys($values);
+        $fields = array_map(function($field)
+        {
+            return $field . ' = :' . $field;
+        }, $fields);
+
+        return 'UPDATE ' . $table . ' SET ' .
+               implode(' AND ', $fields);
     }
 }

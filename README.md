@@ -102,6 +102,15 @@ $db->insert('users', [
 ]);
 ```
 
+## Updating Records
+
+```php
+$db->update('users', [
+  'location' => 'Toronto, Canada',
+  ], 'WHERE username = ?', ["felixkiss"]
+);
+```
+
 ## Different Connections For Read And Write Operations
 
 Sometimes it can be useful, to specify separate connections for reads (SELECT)
