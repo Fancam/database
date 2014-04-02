@@ -182,16 +182,19 @@ class DatabaseSpec extends ObjectBehavior
 
     function it_should_update_records_using_prepared_statements($pdo)
     {
-        $statement = $this->mockStatementFor($pdo, 'UPDATE users SET city = :city WHERE username = :username');
+        $statement = $this->mockStatementFor($pdo, 'UPDATE users SET city = :city, age = :age WHERE username = :username');
 
         $statement->bindValue(':username', Argument::cetera())
                   ->shouldBeCalled();
         $statement->bindValue(':city', Argument::cetera())
                   ->shouldBeCalled();
+        $statement->bindValue(':age', Argument::cetera())
+                  ->shouldBeCalled();
 
         // when
         $this->update('users', [
             'city' => 'Vienna, Austria',
+            'age'  => 24,
         ], 'WHERE username = :username', [
             ':username' => 'felixkiss',
         ]);

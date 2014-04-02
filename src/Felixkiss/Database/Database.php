@@ -239,6 +239,6 @@ class Database
         }, $fields);
 
         return 'UPDATE ' . $table . ' SET ' .
-               implode(' AND ', $fields);
+               implode(', ', $fields);
     }
 }
