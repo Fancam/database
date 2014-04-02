@@ -6,6 +6,26 @@ concise code when working with databases in PHP.
 It is not intended to be an ORM, but rather a better way to work with
 hand-written SQL statements.
 
+# Installation
+
+Install through composer:
+
+```
+$ composer require felixkiss/database:0.*
+```
+
+or edit `composer.json` directly:
+
+```json
+{
+  "require": {
+    "felixkiss/database": "0.*"
+  }
+}
+```
+
+and run `composer update` afterwards.
+
 # Usage
 
 To instantiate a `Database` instance:
