@@ -1,5 +1,7 @@
 # felixkiss/database
 
+[![Build Status](https://travis-ci.org/felixkiss/database.svg?branch=master)](https://travis-ci.org/felixkiss/database)
+
 This project is a thin wrapper around the PDO class to allow cleaner and more
 concise code when working with databases in PHP.
 
