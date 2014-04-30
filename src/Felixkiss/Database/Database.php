@@ -49,10 +49,12 @@ class Database
      * @param  boolean $readOnly
      * @return integer
      */
-    public function execute($sql, $readOnly = false)
+    public function execute($sql, $parameters = [], $readOnly = false)
     {
         $connection = $readOnly === true ? $this->read : $this->write;
-        return $connection->exec($sql);
+        $statement = $connection->prepare($sql);
+        $this->bindParameters($statement, $parameters);
+        return $statement->execute();
     }
 
     /**

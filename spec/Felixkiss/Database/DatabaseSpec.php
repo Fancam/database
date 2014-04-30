@@ -20,22 +20,38 @@ class DatabaseSpec extends ObjectBehavior
 
     function it_should_execute_sql_statements($pdo)
     {
-        $pdo->exec('SOME SQL foo')
-            ->shouldBeCalled();
+        $statement = $this->mockStatementFor($pdo, 'SOME SQL foo');
+        $statement->execute()
+                  ->shouldBeCalled();
 
         // when
         $this->execute('SOME SQL foo');
+    }
+
+    function its_execute_should_accept_parameters($pdo)
+    {
+        $statement = $this->mockStatementFor(
+            $pdo, 'DELETE FROM foo WHERE bar = ?'
+        );
+
+        $statement->bindValue(1, "Foo Bar", PDO::PARAM_STR)
+                  ->shouldBeCalled();
+
+        // when
+        $this->execute('DELETE FROM foo WHERE bar = ?', ["Foo Bar"]);
     }
 
     function its_execute_should_run_on_write_by_default(PDO $read, PDO $write)
     {
         $this->beConstructedWith($read, $write);
 
-        $read->exec(Argument::any())
+        $read->prepare(Argument::any())
              ->shouldBeCalledTimes(0);
-        $write->exec(Argument::any())
-              ->shouldBeCalled();
+        $statement = $this->mockStatementFor($write, 'SOME SQL foo');
+        $statement->execute()
+                  ->shouldBeCalled();
 
+        // when
         $this->execute('SOME SQL foo');
     }
 
@@ -43,22 +59,14 @@ class DatabaseSpec extends ObjectBehavior
     {
         $this->beConstructedWith($read, $write);
 
-        $read->exec(Argument::any())
-             ->shouldBeCalled();
-        $write->exec(Argument::any())
+        $statement = $this->mockStatementFor($read, 'SOME SQL foo');
+        $statement->execute()
+                  ->shouldBeCalled();
+        $write->prepare(Argument::any())
               ->shouldBeCalledTimes(0);
 
-        $this->execute('SOME SQL foo', true);
-    }
-
-    function its_execute_should_return_the_number_of_affected_rows($pdo)
-    {
-        $pdo->exec('SOME SQL foo')
-            ->willReturn(123);
-
         // when
-        $this->execute('SOME SQL foo')
-             ->shouldReturn(123);
+        $this->execute('SOME SQL foo', [], true);
     }
 
     function it_should_select_records_using_prepared_statements($pdo, PDOStatement $statement)

@@ -47,8 +47,8 @@ $db = new Database($pdo);
 $db->execute('TRUNCATE some_table');
 ```
 
-The `execute` method will return the number of affected rows. See
-[PDO#exec](http://www.php.net/manual/en/pdo.exec.php) for more information.
+The `execute` method can be used to execute any prepared statement. It takes an
+optional array of parameters as the second argument.
 
 ## SELECT
 
@@ -124,12 +124,12 @@ $write = new PDO('mysql:dbname=foo;host=mirror.example.com', 'foo', 'bar');
 $db = new Database($read, $write);
 ```
 
-Other SQL statements (via `execute()`) will be called on the write connection by
-default, unless `$readOnly = true` is specified as the second parameter:
+Other SQL statements (via `execute()`) will be called on the write connection
+by default, unless `$readOnly = true` is specified as the third parameter:
 
 ```php
 $db->execute('TRUNCATE users'); // runs on write connection
-$db->execute('LOCK TABLE users WRITE', true); // runs on read connection
+$db->execute('LOCK TABLE users WRITE', [], true); // runs on read connection
 ```
 
 # License
