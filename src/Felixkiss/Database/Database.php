@@ -49,7 +49,7 @@ class Database
      * @param  boolean $readOnly
      * @return integer
      */
-    public function execute($sql, $parameters = [], $readOnly = false)
+    public function execute($sql, $parameters = array(), $readOnly = false)
     {
         $connection = $readOnly === true ? $this->read : $this->write;
         $statement = $connection->prepare($sql);
@@ -65,7 +65,7 @@ class Database
      * @param  array  $parameters
      * @return PDOStatement
      */
-    public function select($query, $parameters = [])
+    public function select($query, $parameters = array())
     {
         $statement = $this->read->prepare($query);
 
@@ -82,7 +82,7 @@ class Database
      * @param  array  $parameters
      * @return array
      */
-    public function lists($query, $parameters = [])
+    public function lists($query, $parameters = array())
     {
         $statement = $this->select($query, $parameters);
         $list = $statement->fetchAll(PDO::FETCH_COLUMN, 0);
@@ -98,7 +98,7 @@ class Database
      * @param  array  $parameters
      * @return mixed
      */
-    public function pluck($query, $parameters = [])
+    public function pluck($query, $parameters = array())
     {
         $statement = $this->select($query, $parameters);
         $result = $statement->fetchColumn(0);
@@ -113,12 +113,12 @@ class Database
      * @param string $table
      * @param array  $values
      */
-    public function insert($table, $values = [])
+    public function insert($table, $values = array())
     {
         $sql = $this->buildInsertQuery($table, $values);
         $statement = $this->write->prepare($sql);
 
-        $parameters = [];
+        $parameters = array();
         foreach ($values as $key => $value)
         {
             $parameters[':' . $key] = $value;
@@ -143,7 +143,7 @@ class Database
         $sql = $this->buildUpdateQuery($table, $values) . ' ' . $where;
         $statement = $this->write->prepare($sql);
 
-        $parameters = [];
+        $parameters = array();
         foreach ($values as $key => $value)
         {
             $parameters[':' . $key] = $value;
