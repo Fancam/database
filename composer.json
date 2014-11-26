@@ -1,5 +1,5 @@
 {
-    "name": "felixkiss/database",
+    "name": "fancam/database",
     "description": "A simple wrapper around PDO",
     "keywords": ["database", "pdo"],
     "license": "MIT",
@@ -7,6 +7,10 @@
         {
             "name": "Felix Kiss",
             "email": "felix@felixkiss.com"
+        },
+        {
+            "name": "Bjorn Theart",
+            "email": "bjorn@fancam.com"
         }
     ],
     "require": {
